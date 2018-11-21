@@ -10,6 +10,8 @@ class ApiGatewayCachingPlugin {
     this.serverless = serverless;
     this.options = options;
 
+    this.skipRestAPICheck = serverless.service.custom.apiGatewayCaching.skipRestAPICheck;
+
     this.hooks = {
       'before:package:initialize': this.createSettings.bind(this),
       'before:package:finalize': this.updateCloudFormationTemplate.bind(this),
@@ -47,6 +49,9 @@ class ApiGatewayCachingPlugin {
   }
 
   restApiExists() {
+    if (this.skipRestAPICheck) {
+      return true;
+    }
     let resource = this.serverless.service.provider.compiledCloudFormationTemplate.Resources['ApiGatewayRestApi'];
     if (resource) {
       return true;
